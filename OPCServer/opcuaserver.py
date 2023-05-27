@@ -32,7 +32,7 @@ server.start()
 
 try:
     while True:
-        time.sleep(1)
+        time.sleep(0.01)
         for node in jsonnodes:
             for var in node["variables"]:
                 var_node = server.get_node(var["node_id"])

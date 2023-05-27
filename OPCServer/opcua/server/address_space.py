@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 import collections
 import shelve
+import redis
 try:
     import cPickle as pickle
 except:
@@ -47,6 +48,7 @@ class AttributeService(object):
         self.logger.debug("read %s", params)
         res = []
         for readvalue in params.NodesToRead:
+
             res.append(self._aspace.get_attribute_value(readvalue.NodeId, readvalue.AttributeId))
         return res
 
@@ -423,7 +425,7 @@ class NodeManagementService(object):
         if item.SpecifiedAttributes & getattr(ua.NodeAttributesMask, name):
             dv = ua.DataValue(ua.Variant(getattr(item, name), vtype))
             if add_timestamps:
-                # dv.ServerTimestamp = datetime.utcnow()  # Disabled until someone explains us it should be there
+                dv.ServerTimestamp = datetime.utcnow()  # Disabled until someone explains us it should be there
                 dv.SourceTimestamp = datetime.utcnow()
             nodedata.attributes[getattr(ua.AttributeIds, name)] = AttributeValue(dv)
 
@@ -489,6 +491,8 @@ class MethodService(object):
                     res.StatusCode = ua.StatusCode(ua.StatusCodes.BadUnexpectedError)
         return res
 
+
+redisserver = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
 class AddressSpace(object):
 
@@ -641,6 +645,7 @@ class AddressSpace(object):
 
         self._nodes = LazyLoadingDict(shelve.open(path, "r"))
 
+
     def get_attribute_value(self, nodeid, attr):
         with self._lock:
             self.logger.debug("get attr val: %s %s", nodeid, attr)
@@ -661,6 +666,7 @@ class AddressSpace(object):
 
     def set_attribute_value(self, nodeid, attr, value):
         with self._lock:
+            redisserver.set(str(nodeid), str(value))
             self.logger.debug("set attr val: %s %s %s", nodeid, attr, value)
             node = self._nodes.get(nodeid, None)
             if node is None:
