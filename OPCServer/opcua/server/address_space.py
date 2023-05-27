@@ -666,7 +666,9 @@ class AddressSpace(object):
 
     def set_attribute_value(self, nodeid, attr, value):
         with self._lock:
-            redisserver.set(str(nodeid), str(value))
+            if "ns=1;s=" in str(nodeid):
+                redisserver.set(str(nodeid), str(value))
+                
             self.logger.debug("set attr val: %s %s %s", nodeid, attr, value)
             node = self._nodes.get(nodeid, None)
             if node is None:
