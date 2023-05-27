@@ -3,8 +3,6 @@ import logging
 from datetime import datetime
 import collections
 import shelve
-import redis
-
 try:
     import cPickle as pickle
 except:
@@ -499,7 +497,7 @@ class AddressSpace(object):
     and helper methods.
     The methods are thread safe
     """
-    
+
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self._nodes = {}
@@ -508,7 +506,6 @@ class AddressSpace(object):
         self._handle_to_attribute_map = {}
         self._default_idx = 2
         self._nodeid_counter = {0: 20000, 1: 2000}
-    
 
     def __getitem__(self, nodeid):
         with self._lock:
@@ -672,20 +669,12 @@ class AddressSpace(object):
             if attval is None:
                 self.logger.warning("Tried to write attribute '%s' in %s, but the attribute is missing", attr, nodeid)
                 return ua.StatusCode(ua.StatusCodes.BadAttributeIdInvalid)
-            
-            redisServer = redis.Redis(host='localhost', port=6379, decode_responses=True)
-            # old = attval.value
-            old = redisServer.get(str(nodeid))
-            redisServer.set("OPCUAbuffer",str(value))
-            new = redisServer.get(str("OPCUAbuffer"))
+
+            old = attval.value
             attval.value = value
-            print(value)
-            print(old)
             cbs = []
-            if old != new:  # only send call callback when a value change has happend
+            if old.Value != value.Value:  # only send call callback when a value change has happend
                 cbs = list(attval.datachange_callbacks.items())
-                redisServer.set(str(nodeid),str(value))
-                print("NewValueChanged------------------------------------------")
 
         for k, v in cbs:
             try:
