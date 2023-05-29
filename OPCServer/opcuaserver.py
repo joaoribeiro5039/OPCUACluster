@@ -32,13 +32,10 @@ server.start()
 
 try:
     while True:
-        time.sleep(0.0001)
         for node in jsonnodes:
+            time.sleep(1)
             for var in node["variables"]:
                 var_node = server.get_node(var["node_id"])
-                if var["isRandom"]:
-                    value = random.randint(var["range_min"], var["range_max"])
-                    var_node.set_value(value)
                 if "DateTime" in var["name"]:
                     var_node.set_value(datetime.datetime.now())
 
