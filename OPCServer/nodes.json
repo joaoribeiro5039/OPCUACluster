@@ -6,7 +6,7 @@
             {
                 "node_id": "ns=1;s=Server1.Machine1.Speed",
                 "name": "Speed",
-                "value": 0,
+                "value": "0",
                 "isRandom": true,
                 "range_min": 200,
                 "range_max": 400
@@ -14,7 +14,7 @@
             {
                 "node_id": "ns=1;s=Server1.Machine1.Temperature",
                 "name": "Temperature",
-                "value": 0,
+                "value": "0",
                 "range": 0,
                 "isRandom": true,
                 "range_min": 300,
@@ -23,7 +23,7 @@
             {
                 "node_id": "ns=1;s=Server1.Machine1.State",
                 "name": "State",
-                "value": 0,
+                "value": "0",
                 "isRandom": false,
                 "range_min": 0,
                 "range_max": 5
@@ -31,7 +31,7 @@
             {
                 "node_id": "ns=1;s=Server1.Machine1.DateTime",
                 "name": "DateTime",
-                "value": 0,
+                "value": "0",
                 "isRandom": false,
                 "range_min": 0,
                 "range_max": 0
@@ -45,7 +45,7 @@
             {
                 "node_id": "ns=1;s=Server1.Machine2.Speed",
                 "name": "Speed",
-                "value": 0,
+                "value": "0",
                 "isRandom": true,
                 "range_min": 200,
                 "range_max": 400
@@ -53,7 +53,7 @@
             {
                 "node_id": "ns=1;s=Server1.Machine2.Temperature",
                 "name": "Temperature",
-                "value": 0,
+                "value": "0",
                 "isRandom": true,
                 "range_min": 300,
                 "range_max": 400
@@ -61,7 +61,7 @@
             {
                 "node_id": "ns=1;s=Server1.Machine2.State",
                 "name": "State",
-                "value": 0,
+                "value": "0",
                 "isRandom": false,
                 "range_min": 0,
                 "range_max": 5
@@ -69,7 +69,7 @@
             {
                 "node_id": "ns=1;s=Server1.Machine2.DateTime",
                 "name": "DateTime",
-                "value": 0,
+                "value": "0",
                 "isRandom": false,
                 "range_min": 0,
                 "range_max": 0

@@ -48,14 +48,30 @@ class AttributeService(object):
         self.logger.debug("read %s", params)
         res = []
         for readvalue in params.NodesToRead:
+            try:
+                read_fromOPCvalue = self._aspace.get_attribute_value(readvalue.NodeId, readvalue.AttributeId)
+                redis_key = str(readvalue.NodeId)[str(readvalue.NodeId).index("(") + 1 : str(readvalue.NodeId).index(")")]
+                new_value = redisserver.get(redis_key)
 
-            res.append(self._aspace.get_attribute_value(readvalue.NodeId, readvalue.AttributeId))
+                start_index = read_fromOPCvalue.index("val:") + len("val:")
+                end_index = read_fromOPCvalue.index(",type:")
+                updated_data_value = read_fromOPCvalue[:start_index] + str(new_value) + read_fromOPCvalue[end_index:]
+                res.append(updated_data_value)
+            except:
+                res.append(self._aspace.get_attribute_value(readvalue.NodeId, readvalue.AttributeId))
         return res
 
     def write(self, params, user=UserManager.User.Admin):
         self.logger.debug("write %s as user %s", params, user)
         res = []
         for writevalue in params.NodesToWrite:
+            
+            redis_key = str(writevalue.NodeId)[str(writevalue.NodeId).index("(") + 1 : str(writevalue.NodeId).index(")")]
+            start_index = str(writevalue.Value).index("val:") + len("val:")
+            end_index = str(writevalue.Value).index(",type:")
+            redis_value = str(writevalue.Value)[start_index:end_index]
+            redisserver.set(redis_key,redis_value)
+
             if user != UserManager.User.Admin:
                 if writevalue.AttributeId != ua.AttributeIds.Value:
                     res.append(ua.StatusCode(ua.StatusCodes.BadUserAccessDenied))
@@ -665,10 +681,7 @@ class AddressSpace(object):
             return attval.value
 
     def set_attribute_value(self, nodeid, attr, value):
-        with self._lock:
-            if "ns=1;s=" in str(nodeid):
-                redisserver.set(str(nodeid), str(value))
-                
+        with self._lock:               
             self.logger.debug("set attr val: %s %s %s", nodeid, attr, value)
             node = self._nodes.get(nodeid, None)
             if node is None:
