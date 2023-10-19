@@ -4,6 +4,7 @@ from datetime import datetime
 import collections
 import shelve
 import redis
+import threading
 try:
     import cPickle as pickle
 except:
@@ -40,6 +41,7 @@ class NodeData(object):
 
 class AttributeService(object):
 
+
     def __init__(self, aspace):
         self.logger = logging.getLogger(__name__)
         self._aspace = aspace
@@ -70,7 +72,11 @@ class AttributeService(object):
             start_index = str(writevalue.Value).index("val:") + len("val:")
             end_index = str(writevalue.Value).index(",type:")
             redis_value = str(writevalue.Value)[start_index:end_index]
-            redisserver.set(redis_key,redis_value)
+            if (redis_key.__contains__("ns")):
+                current_redis_value = redisserver.get(redis_key)
+                if(current_redis_value != redis_value):
+                    redisserver.set(redis_key,redis_value)
+                    redisserver.publish(redis_key, redis_value)
 
             if user != UserManager.User.Admin:
                 if writevalue.AttributeId != ua.AttributeIds.Value:

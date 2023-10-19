@@ -3,7 +3,7 @@ import time
 import random
 
 # OPC UA server endpoint URL
-url = "opc.tcp://localhost:4840"  # Replace with your server's URL
+url = "opc.tcp://localhost:4841"  # Replace with your server's URL
 
 # Create a client instance
 client = Client(url)
