@@ -15,6 +15,7 @@ try:
     root = client.get_root_node()
         
     while True:
+        time.sleep(0.5)
         root = client.get_root_node()
         root.get_child(["0:Objects", "0:Machine1", "0:Speed"]).set_value(random.randint(0, 10000))
         print("0:Objects", "0:Machine1", "0:Speed")
